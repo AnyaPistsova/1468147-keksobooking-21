@@ -1,7 +1,7 @@
 # Личный проект «Кексобукинг» [![Build status][travis-image]][travis-url]
 
 * Студент: [Анна Писцова](https://up.htmlacademy.ru/javascript/21/user/1468147).
-* Наставник: `Неизвестно`.
+* Наставник: [Дина Абрамова](https://up.htmlacademy.ru/javascript/21/user/1483099).
 
 ---
 
