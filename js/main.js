@@ -1,7 +1,7 @@
 "use strict";
 
 // consts common
-const MIN_FOR_ALL = 1;
+const MIN_VALUE = 1;
 
 // consts author
 const AVATARS = ["img/avatars/user01.png", "img/avatars/user02.png", "img/avatars/user03.png", "img/avatars/user04.png", "img/avatars/user05.png", "img/avatars/user06.png", "img/avatars/user07.png", "img/avatars/user08.png"];
@@ -23,42 +23,38 @@ const COORDINATE_X_MAX = mapMaxWidth;
 const COORDINATE_Y_MIN = 130;
 const COORDINATE_Y_MAX = 630;
 
-// consts pin
-const PIN_WIDTH = 40;
-const PIN_HEIGHT = 40;
-
 // computation
 const getRandomNumber = (min, max) => {
   return Math.floor(Math.random() * (max - min + 1) + min);
 };
 
-const getRandomElement = (arr) => {
-  return arr[Math.floor(Math.random() * arr.length)];
+const getRandomElement = (elements) => {
+  return elements[Math.floor(Math.random() * elements.length)];
 };
 
-const getRandomArr = (arr) => {
-  return arr[getRandomNumber(0, arr.length - 1)];
+const getRandomElements = (elements) => {
+  return elements[getRandomNumber(0, elements.length - 1)];
 };
 
 const doAdvert = (number) => {
-  const advertsArr = [];
+  const adverts = [];
   for (let i = 0; i < number; i++) {
-    advertsArr.push({
+    adverts.push({
       "author": {
         "avatar": getRandomElement(AVATARS),
       },
       "offer": {
         "title": "Заголовок",
         "address": "600, 350",
-        "price": getRandomNumber(MIN_FOR_ALL, PRICE_MAX),
+        "price": getRandomNumber(MIN_VALUE, PRICE_MAX),
         "type": getRandomElement(TYPES),
-        "rooms": getRandomNumber(MIN_FOR_ALL, ROOMS_MAX),
-        "guests": getRandomNumber(MIN_FOR_ALL, GUESTS_MAX),
+        "rooms": getRandomNumber(MIN_VALUE, ROOMS_MAX),
+        "guests": getRandomNumber(MIN_VALUE, GUESTS_MAX),
         "checkin": getRandomElement(TIMES),
         "checkout": getRandomElement(TIMES),
-        "features": getRandomArr(FEATURES),
+        "features": getRandomElements(FEATURES),
         "description": "Описание",
-        "photos": getRandomArr(PHOTOS)
+        "photos": getRandomElements(PHOTOS)
       },
       "location": {
         "x": getRandomNumber(COORDINATE_X_MIN, COORDINATE_X_MAX),
@@ -66,42 +62,52 @@ const doAdvert = (number) => {
       }
     });
   }
-  return advertsArr;
+
+  return adverts;
 };
+
+const adverts = doAdvert(8);
 
 const map = document.querySelector(".map");
 map.classList.remove("map--faded");
 
-const pinTemplate = document.querySelector("#pin");
+const pinTemplate = document.querySelector("#pin").content;
 const pinButton = pinTemplate.querySelector(".map__pin");
-// const adLocation = document.querySelector(".map__pins");
+const pins = document.querySelector(".map__pins");
 
-const addPin = (newPin) => {
+const getPin = (index) => {
   const pinClone = pinButton.cloneNode(true);
 
-  let top = pinButton.style.top - PIN_HEIGHT;
-  let left = pinButton.style.left - PIN_WIDTH / 2;
-
+  let top = pinButton.style.top - adverts[index].location.y;
+  let left = pinButton.style.left - adverts[index].location.x;
   pinClone.style.top = top;
   pinClone.style.left = left;
 
-  const adImg = pinButton.querySelector("img");
-  const imgClone = adImg.cloneNode(false);
-  imgClone.src = newPin.author.avatar;
-  imgClone.alt = newPin.offer.title;
-
-  pinClone.append(imgClone);
+  const pinImg = pinClone.querySelector("img");
+  pinImg.src = adverts[index].author.avatar;
+  pinImg.alt = adverts[index].offer.title;
 
   return pinClone;
 };
 
-const appendAddPins = (newPins) => {
-  let fragment = document.createDocumentFragment();
-  newPins.forEach(function (newPin) {
-    fragment.appendChild(addPin(newPin));
+const newPins = (number) => {
+  const adPins = [];
+  for (let i = 0; i < number; i++) {
+    adPins.push(getPin(i));
   }
-  );
+
+  return adPins;
 };
 
-doAdvert(8);
-appendAddPins();
+const appendNewPins = (mindedPins) => {
+  let fragment = document.createDocumentFragment();
+
+  newPins(8).forEach = () => {
+    fragment.appendChild(newPins(8));
+    mindedPins.appendChild(fragment);
+  };
+
+  return fragment;
+};
+
+appendNewPins(pins);
