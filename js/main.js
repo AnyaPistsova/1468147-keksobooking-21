@@ -68,13 +68,16 @@ const doAdvert = (number) => {
 
 const adverts = doAdvert(8);
 
+// удаляю класс (второй пункт в задании)
 const map = document.querySelector(".map");
 map.classList.remove("map--faded");
 
+// нахожу нужные элементы
 const pinTemplate = document.querySelector("#pin").content;
 const pinButton = pinTemplate.querySelector(".map__pin");
 const pins = document.querySelector(".map__pins");
 
+// клонирую кнопку в шаблоне #pin и задаю ей параметры
 const getPin = (index) => {
   const pinClone = pinButton.cloneNode(true);
 
@@ -90,6 +93,7 @@ const getPin = (index) => {
   return pinClone;
 };
 
+// делаю массив из кнопок, которые получила в  getPin
 const newPins = (number) => {
   const adPins = [];
   for (let i = 0; i < number; i++) {
@@ -99,6 +103,7 @@ const newPins = (number) => {
   return adPins;
 };
 
+// делаю функцию для добавления массива на страницу
 const appendNewPins = (mindedPins) => {
   let fragment = document.createDocumentFragment();
 
