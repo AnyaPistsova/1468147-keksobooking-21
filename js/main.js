@@ -1,6 +1,7 @@
 "use strict";
 
 // consts common
+const REQUIRED_ADVERTS = 8;
 const MIN_VALUE = 1;
 
 // consts author
@@ -9,19 +10,23 @@ const AVATARS = ["img/avatars/user01.png", "img/avatars/user02.png", "img/avatar
 // consts offer
 const PRICE_MAX = 5000;
 const ROOMS_MAX = 5;
-const GUESTS_MAX = 8;
+const GUESTS_MAX = 10;
 const TYPES = ["palace", "flat", "house", "bungalow"];
 const TIMES = ["12:00", "13:00", "14:00"];
 const FEATURES = ["wifi", "dishwasher", "parking", "washer", "elevator", "conditioner"];
 const PHOTOS = ["http://o0.github.io/assets/images/tokyo/hotel1.jpg", "http://o0.github.io/assets/images/tokyo/hotel2.jpg", "http://o0.github.io/assets/images/tokyo/hotel3.jpg"];
 
 // consts location
+const PIN_WIDTH = 50;
+const PIN_HEIGHT = 70;
+
 const mapMaxWidth = document.querySelector(".map").offsetWidth;
 const COORDINATE_X_MIN = 0;
-const COORDINATE_X_MAX = mapMaxWidth;
+const COORDINATE_X_MAX = mapMaxWidth - PIN_WIDTH / 2;
 
 const COORDINATE_Y_MIN = 130;
 const COORDINATE_Y_MAX = 630;
+
 
 // computation
 const getRandomNumber = (min, max) => {
@@ -36,7 +41,7 @@ const getRandomElements = (elements) => {
   return elements[getRandomNumber(0, elements.length - 1)];
 };
 
-const doAdvert = (number) => {
+const createAdverts = (number) => {
   const adverts = [];
   for (let i = 0; i < number; i++) {
     adverts.push({
@@ -66,53 +71,37 @@ const doAdvert = (number) => {
   return adverts;
 };
 
-const adverts = doAdvert(8);
+const adverts = createAdverts(REQUIRED_ADVERTS);
 
-// удаляю класс (второй пункт в задании)
 const map = document.querySelector(".map");
 map.classList.remove("map--faded");
 
-// нахожу нужные элементы
 const pinTemplate = document.querySelector("#pin").content;
 const pinButton = pinTemplate.querySelector(".map__pin");
 const pins = document.querySelector(".map__pins");
 
-// клонирую кнопку в шаблоне #pin и задаю ей параметры
-const getPin = (index) => {
+const getPin = (advert) => {
   const pinClone = pinButton.cloneNode(true);
 
-  let top = pinButton.style.top - adverts[index].location.y;
-  let left = pinButton.style.left - adverts[index].location.x;
-  pinClone.style.top = top;
-  pinClone.style.left = left;
+  // pinClone.style = `left: ${advert.location.x - PIN_WIDTH / 2}px; top: ${advert.location.y - PIN_HEIGHT}px`;
+  pinClone.style.top = `${advert.location.y - PIN_HEIGHT}px`;
+  pinClone.style.left = `${advert.location.x - PIN_WIDTH / 2}px`;
 
   const pinImg = pinClone.querySelector("img");
-  pinImg.src = adverts[index].author.avatar;
-  pinImg.alt = adverts[index].offer.title;
+  pinImg.src = advert.author.avatar;
+  pinImg.alt = advert.offer.title;
 
   return pinClone;
 };
 
-// делаю массив из кнопок, которые получила в  getPin
-const newPins = (number) => {
-  const adPins = [];
-  for (let i = 0; i < number; i++) {
-    adPins.push(getPin(i));
-  }
-
-  return adPins;
-};
-
-// делаю функцию для добавления массива на страницу
-const appendNewPins = (mindedPins) => {
+const appendNewPins = () => {
   let fragment = document.createDocumentFragment();
+  adverts.forEach((advert) => {
+    fragment.appendChild(getPin(advert));
+  });
 
-  newPins(8).forEach = () => {
-    fragment.appendChild(newPins(8));
-    mindedPins.appendChild(fragment);
-  };
-
+  pins.appendChild(fragment);
   return fragment;
 };
 
-appendNewPins(pins);
+appendNewPins();
