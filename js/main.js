@@ -104,3 +104,68 @@ appendNewPins();
 // 1. Берём данные из первой рекламы (первого элемента массива реклам). Добавляем в map__pins через DF.
 // 2. На основе рекламной карточки 1. и шаблона #card заполняем объект новыми данными.
 // 3. Полученный элемент добавляем в блок .map перед блоком.map__filters-container.
+
+// ну, сбогам. начинаю вторую часть задания))))))))
+// добавлю сначала нужный тег
+
+const cardTemplate = document.querySelector("#card").content;
+
+// клонируем cardTemplate
+const cardTemplateClone = cardTemplate.cloneNode(true);
+
+// вытаскиваю из него остальные теги
+const cardTitle = cardTemplateClone.querySelector(".popup__title");
+const cardAdress = cardTemplateClone.querySelector(".popup__text--address");
+const cardPrice = cardTemplateClone.querySelector(".popup__text--price");
+const cardType = cardTemplateClone.querySelector(".popup__type");
+const cardCapacity = cardTemplateClone.querySelector(".popup__text--capacity");
+const cardTime = cardTemplateClone.querySelector(".popup__text--time");
+const cardFeatures = cardTemplateClone.querySelector(".popup__features");
+const cardDescription = cardTemplateClone.querySelector(".popup__description");
+const cardPhoto = cardTemplateClone.querySelector(".popup__photos");
+const cardAvatar = cardTemplateClone.querySelector(".popup__avatar");
+
+// отлично. теперь по пунктам добавляем значения
+const advertTitle = `${advert.offer.title}`;
+cardTitle.append(advertTitle);
+
+const advertAdress = `${advert.offer.address}`;
+cardAdress.append(advertAdress);
+
+const advertPrice = `${advert.offer.price}₽/ночь`;
+cardPrice.append(advertPrice);
+
+const advertType =`${advert.offer.type}`;
+if (`${advert.offer.type}` === "flat") {
+  cardType.append("Квартира");
+};
+
+if (`${advert.offer.type}` === "palace") {
+  cardType.append("Дворец");
+};
+
+if (`${advert.offer.type}` === "house") {
+  cardType.append("Дом");
+};
+
+if (`${advert.offer.type}` === "bungalow") {
+  cardType.append("Бунгало");
+};
+
+const advertCapacity = `${advert.offer.rooms} комнаты для ${advert.offer.guests}} гостей`;
+cardCapacity.append(advertCapacity);
+
+const advertTyme = `Заезд после ${advert.offer.checkin}, выезд до ${advert.offer.checkout}`;
+cardTime.append(advertTyme);
+
+const advertFeatures = `${advert.offer.features}`;
+cardFeatures.append(advertFeatures);
+
+const advertDescription = `${advert.offer.description}`;
+cardDescription.append(advertDescription);
+
+// осталось вставить два последних пункта
+// осталось изменить append на что-то, что не просто добавляет, а заменяет
+// осталось скрыть пункты, где информации недостаточно
+// осталось превратить всё это в функции
+// осталось то, что получилось, внести в блок .map перед блоком.map__filters-container.
