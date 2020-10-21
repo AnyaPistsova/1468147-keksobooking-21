@@ -33,12 +33,8 @@ const getRandomNumber = (min, max) => {
   return Math.floor(Math.random() * (max - min + 1) + min);
 };
 
-const getRandomElement = (elements) => {
-  return elements[Math.floor(Math.random() * elements.length)];
-};
-
-const getRandomElements = (elements) => {
-  return elements[getRandomNumber(0, elements.length - 1)];
+const getRandomElement = (element) => {
+  return element[getRandomNumber(0, element.length - 1)];
 };
 
 const createAdverts = (number) => {
@@ -57,9 +53,9 @@ const createAdverts = (number) => {
         "guests": getRandomNumber(MIN_VALUE, GUESTS_MAX),
         "checkin": getRandomElement(TIMES),
         "checkout": getRandomElement(TIMES),
-        "features": getRandomElements(FEATURES),
+        "features": getRandomElement(FEATURES),
         "description": "Описание",
-        "photos": getRandomElements(PHOTOS)
+        "photos": getRandomElement(PHOTOS)
       },
       "location": {
         "x": getRandomNumber(COORDINATE_X_MIN, COORDINATE_X_MAX),
@@ -101,7 +97,10 @@ const appendNewPins = () => {
   });
 
   pins.appendChild(fragment);
-  return fragment;
 };
 
 appendNewPins();
+
+// 1. Берём данные из первой рекламы (первого элемента массива реклам). Добавляем в map__pins через DF.
+// 2. На основе рекламной карточки 1. и шаблона #card заполняем объект новыми данными.
+// 3. Полученный элемент добавляем в блок .map перед блоком.map__filters-container.
