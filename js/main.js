@@ -37,6 +37,12 @@ const getRandomElement = (element) => {
   return element[getRandomNumber(0, element.length - 1)];
 };
 
+const getRandomLength = (elements) => {
+  let [...components] = [...elements];
+  components.length = getRandomNumber(MIN_VALUE, elements.length);
+  return components;
+};
+
 const createAdverts = (number) => {
   const adverts = [];
   for (let i = 0; i < number; i++) {
@@ -48,12 +54,12 @@ const createAdverts = (number) => {
         "title": "Заголовок",
         "address": "600, 350",
         "price": getRandomNumber(MIN_VALUE, PRICE_MAX),
-        "type": getRandomElement(TYPES),
+        "type": getRandomLength(TYPES),
         "rooms": getRandomNumber(MIN_VALUE, ROOMS_MAX),
         "guests": getRandomNumber(MIN_VALUE, GUESTS_MAX),
         "checkin": getRandomElement(TIMES),
         "checkout": getRandomElement(TIMES),
-        "features": getRandomElement(FEATURES),
+        "features": getRandomLength(FEATURES),
         "description": "Описание",
         "photos": getRandomElement(PHOTOS)
       },
@@ -101,71 +107,76 @@ const appendNewPins = () => {
 
 appendNewPins();
 
-// 1. Берём данные из первой рекламы (первого элемента массива реклам). Добавляем в map__pins через DF.
-// 2. На основе рекламной карточки 1. и шаблона #card заполняем объект новыми данными.
-// 3. Полученный элемент добавляем в блок .map перед блоком.map__filters-container.
-
-// ну, сбогам. начинаю вторую часть задания))))))))
-// добавлю сначала нужный тег
-
 const cardTemplate = document.querySelector("#card").content;
 
-// клонируем cardTemplate
 const cardTemplateClone = cardTemplate.cloneNode(true);
 
-// вытаскиваю из него остальные теги
 const cardTitle = cardTemplateClone.querySelector(".popup__title");
 const cardAdress = cardTemplateClone.querySelector(".popup__text--address");
 const cardPrice = cardTemplateClone.querySelector(".popup__text--price");
 const cardType = cardTemplateClone.querySelector(".popup__type");
 const cardCapacity = cardTemplateClone.querySelector(".popup__text--capacity");
 const cardTime = cardTemplateClone.querySelector(".popup__text--time");
-const cardFeatures = cardTemplateClone.querySelector(".popup__features");
+// const cardFeatures = cardTemplateClone.querySelector(".popup__features");
 const cardDescription = cardTemplateClone.querySelector(".popup__description");
-const cardPhoto = cardTemplateClone.querySelector(".popup__photos");
+const cardPhoto = cardTemplateClone.querySelector(".popup__photo");
 const cardAvatar = cardTemplateClone.querySelector(".popup__avatar");
 
-// отлично. теперь по пунктам добавляем значения
-const advertTitle = `${advert.offer.title}`;
-cardTitle.append(advertTitle);
+const putAdvert = () => {
+  cardTitle.textContent = adverts[0].offer.title;
+  cardTitle.style = "display: none";
 
-const advertAdress = `${advert.offer.address}`;
-cardAdress.append(advertAdress);
+  cardAdress.textContent = adverts[0].offer.address;
+  cardAdress.style = "display: none";
 
-const advertPrice = `${advert.offer.price}₽/ночь`;
-cardPrice.append(advertPrice);
+  cardPrice.textContent = `${adverts[0].offer.price}₽/ночь`;
 
-const advertType =`${advert.offer.type}`;
-if (`${advert.offer.type}` === "flat") {
-  cardType.append("Квартира");
+  const advertTypes = (components) => {
+    const typesMeanings = ["Квартира", "Дворец", "Дом", "Бунгало"];
+
+    for (let i = 0; i < typesMeanings.length; i++) {
+      if (components[i] === TYPES[i]) {
+        cardType.textContent = typesMeanings[i];
+      }
+    }
+  };
+
+  advertTypes(adverts[0].offer.type);
+
+  cardCapacity.textContent = `${adverts[0].offer.rooms} комнаты для ${adverts[0].offer.guests} гостей`;
+
+  cardTime.textContent = `Заезд после ${adverts[0].offer.checkin}, выезд до ${adverts[0].offer.checkout}`;
+
+  const getAdvertFeatures = (components) => {
+    const allFeatures = cardTemplateClone.querySelectorAll(".popup__feature");
+
+    for (let i = 0; i < components.length; i++) {
+      const specialFeature = cardTemplateClone.getElementsByClassName(`popup__feature--${components[i]}`); // здесь есть ошибка, но я не понимаю, в чём конкретно;
+
+      if (!components[i].includes(allFeatures[i])) {
+        specialFeature.style = "background-position: 2px -5000px;";
+      }
+    }
+  };
+
+  getAdvertFeatures(adverts[0].offer.features);
+
+  cardDescription.textContent = adverts[0].offer.description;
+  cardDescription.style = "display: none";
+
+  cardPhoto.src = adverts[0].offer.photos;
+
+  cardAvatar.src = adverts[0].author.avatar;
 };
 
-if (`${advert.offer.type}` === "palace") {
-  cardType.append("Дворец");
+putAdvert();
+
+const mapFilters = document.querySelector(".map__filters-container");
+
+const appendNewAdvert = () => {
+  let fragment = document.createDocumentFragment();
+  fragment.appendChild(cardTemplateClone);
+  map.insertBefore(fragment, mapFilters);
 };
 
-if (`${advert.offer.type}` === "house") {
-  cardType.append("Дом");
-};
-
-if (`${advert.offer.type}` === "bungalow") {
-  cardType.append("Бунгало");
-};
-
-const advertCapacity = `${advert.offer.rooms} комнаты для ${advert.offer.guests}} гостей`;
-cardCapacity.append(advertCapacity);
-
-const advertTyme = `Заезд после ${advert.offer.checkin}, выезд до ${advert.offer.checkout}`;
-cardTime.append(advertTyme);
-
-const advertFeatures = `${advert.offer.features}`;
-cardFeatures.append(advertFeatures);
-
-const advertDescription = `${advert.offer.description}`;
-cardDescription.append(advertDescription);
-
-// осталось вставить два последних пункта
-// осталось изменить append на что-то, что не просто добавляет, а заменяет
-// осталось скрыть пункты, где информации недостаточно
-// осталось превратить всё это в функции
-// осталось то, что получилось, внести в блок .map перед блоком.map__filters-container.
+appendNewAdvert();
