@@ -61,7 +61,7 @@ const createAdverts = (number) => {
         "checkout": getRandomElement(TIMES),
         "features": getRandomLength(FEATURES),
         "description": "Описание",
-        "photos": getRandomElement(PHOTOS)
+        "photos": getRandomLength(PHOTOS)
       },
       "location": {
         "x": getRandomNumber(COORDINATE_X_MIN, COORDINATE_X_MAX),
@@ -117,59 +117,63 @@ const cardPrice = cardTemplateClone.querySelector(".popup__text--price");
 const cardType = cardTemplateClone.querySelector(".popup__type");
 const cardCapacity = cardTemplateClone.querySelector(".popup__text--capacity");
 const cardTime = cardTemplateClone.querySelector(".popup__text--time");
-// const cardFeatures = cardTemplateClone.querySelector(".popup__features");
 const cardDescription = cardTemplateClone.querySelector(".popup__description");
 const cardPhoto = cardTemplateClone.querySelector(".popup__photo");
+const cardPhotos = cardTemplateClone.querySelector(".popup__photos");
 const cardAvatar = cardTemplateClone.querySelector(".popup__avatar");
 
-const putAdvert = () => {
-  cardTitle.textContent = adverts[0].offer.title;
-  cardTitle.style = "display: none";
-
-  cardAdress.textContent = adverts[0].offer.address;
-  cardAdress.style = "display: none";
-
-  cardPrice.textContent = `${adverts[0].offer.price}₽/ночь`;
-
-  const advertTypes = (components) => {
-    const typesMeanings = ["Квартира", "Дворец", "Дом", "Бунгало"];
-
-    for (let i = 0; i < typesMeanings.length; i++) {
-      if (components[i] === TYPES[i]) {
-        cardType.textContent = typesMeanings[i];
-      }
+const renderAdvertPhotos = (components) => {
+  for (let i = 0; i < components.length; i++) {
+    if (components.length === 1) {
+      cardPhoto.src = components;
+    } else {
+      cardPhoto.style = "display: none";
+      const newPhoto = document.createElement("img");
+      newPhoto.src = components[i];
+      newPhoto.width = cardPhoto.width;
+      newPhoto.height = cardPhoto.height;
+      cardPhotos.appendChild(newPhoto);
     }
-  };
-
-  advertTypes(adverts[0].offer.type);
-
-  cardCapacity.textContent = `${adverts[0].offer.rooms} комнаты для ${adverts[0].offer.guests} гостей`;
-
-  cardTime.textContent = `Заезд после ${adverts[0].offer.checkin}, выезд до ${adverts[0].offer.checkout}`;
-
-  const getAdvertFeatures = (components) => {
-    const allFeatures = cardTemplateClone.querySelectorAll(".popup__feature");
-
-    for (let i = 0; i < components.length; i++) {
-      const specialFeature = cardTemplateClone.getElementsByClassName(`popup__feature--${components[i]}`); // здесь есть ошибка, но я не понимаю, в чём конкретно;
-
-      if (!components[i].includes(allFeatures[i])) {
-        specialFeature.style = "background-position: 2px -5000px;";
-      }
-    }
-  };
-
-  getAdvertFeatures(adverts[0].offer.features);
-
-  cardDescription.textContent = adverts[0].offer.description;
-  cardDescription.style = "display: none";
-
-  cardPhoto.src = adverts[0].offer.photos;
-
-  cardAvatar.src = adverts[0].author.avatar;
+  }
 };
 
-putAdvert();
+const renderAdvertTypes = (components) => {
+  const typesMeanings = ["Квартира", "Дворец", "Дом", "Бунгало"];
+
+  for (let i = 0; i < typesMeanings.length; i++) {
+    if (components[i] === TYPES[i]) {
+      cardType.textContent = typesMeanings[i];
+    }
+  }
+};
+
+const renderAdvertFeatures = (components) => {
+  const allFeatures = cardTemplateClone.querySelectorAll(".popup__feature");
+
+  for (let i = 0; i < components.length; i++) {
+    const specialFeature = cardTemplateClone.querySelector(`.popup__feature--${components[i]}`);
+
+    if (!components[i].includes(allFeatures[i])) {
+      specialFeature.style = "background-position: 2px -5000px;";
+    }
+  }
+};
+
+const renderAdvert = () => {
+  cardTitle.textContent = adverts[0].offer.title;
+  cardAdress.textContent = adverts[0].offer.address;
+  cardPrice.textContent = `${adverts[0].offer.price}₽/ночь`;
+  cardCapacity.textContent = `${adverts[0].offer.rooms} комнаты для ${adverts[0].offer.guests} гостей`;
+  cardTime.textContent = `Заезд после ${adverts[0].offer.checkin}, выезд до ${adverts[0].offer.checkout}`;
+  cardDescription.textContent = adverts[0].offer.description;
+  cardAvatar.src = adverts[0].author.avatar;
+
+  renderAdvertTypes(adverts[0].offer.type);
+  renderAdvertFeatures(adverts[0].offer.features);
+  renderAdvertPhotos(adverts[0].offer.photos);
+};
+
+renderAdvert();
 
 const mapFilters = document.querySelector(".map__filters-container");
 
